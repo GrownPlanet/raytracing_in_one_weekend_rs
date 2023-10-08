@@ -79,19 +79,24 @@ fn main() {
     println!("-------------- Done --------------")
 }
 
-fn hit_sphere(center: &Point3, radius: f64, ray: &Ray) -> bool {
+fn hit_sphere(center: &Point3, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.orig.clone() - center.clone();
     let a = Point3::dot(&ray.dir, &ray.dir);
     let b = 2. * Point3::dot(&oc, &ray.dir);
     let c = Point3::dot(&oc, &oc) - radius.powi(2);
     let discriminant = b * b - 4. * a * c;
 
-    discriminant >= 0.
+    if discriminant < 0. {
+        return -1.;
+    }
+    return (-b - discriminant.sqrt()) / (2. * a);
 }
 
 fn ray_color(ray: &Ray) -> Color {
-    if hit_sphere(&Point3::new(0., 0., -1.), 0.5, ray) {
-        return Color::new(1., 0., 0.);
+    let t = hit_sphere(&Point3::new(0., 0., -1.), 0.5, ray);
+    if t > 0. {
+        let n = (ray.clone().at(t) - Point3::new(0., 0., -1.)).unit_vector();
+        return Color::new(n.x + 1., n.y + 1., n.z + 1.) * 0.5;
     }
 
     // change the vector to a value between `-1` and `1`

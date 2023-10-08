@@ -10,7 +10,7 @@ impl Ray {
         Self { orig, dir }
     }
 
-    pub fn at(&mut self, t: f64) -> Point3 {
+    pub fn at(&self, t: f64) -> Point3 {
         self.orig.clone() + self.dir.clone() * t
     }
 }

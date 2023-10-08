@@ -4,6 +4,8 @@ use std::{
     path::Path,
 };
 
+pub mod point3;
+
 fn main() {
     // open file to put image in
     let path = "image.ppm";

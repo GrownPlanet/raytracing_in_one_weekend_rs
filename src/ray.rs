@@ -1,8 +1,8 @@
 use crate::point3::Point3;
 
 pub struct Ray {
-    orig: Point3,
-    dir: Point3,
+    pub orig: Point3,
+    pub dir: Point3,
 }
 
 impl Ray {

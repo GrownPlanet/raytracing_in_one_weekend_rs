@@ -23,6 +23,18 @@ impl Point3 {
             z: p1.x * p2.y - p1.y * p2.x,
         }
     }
+
+    pub fn len(&self) -> f64 {
+        self.len_squared().sqrt()
+    }
+
+    fn len_squared(&self) -> f64 {
+        self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
+    }
+
+    pub fn unit_vector(&self) -> Self {
+        self.clone() / self.len()
+    }
 }
 
 // opperator overloading

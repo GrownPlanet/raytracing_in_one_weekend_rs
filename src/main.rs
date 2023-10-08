@@ -80,5 +80,8 @@ fn main() {
 }
 
 fn ray_color(ray: &Ray) -> Color {
-    Color::new(0., 0., 0.)
+    let unit_direcion = ray.dir.unit_vector();
+    let a = 0.5 * (unit_direcion.y + 1.);
+
+    Color::new(1., 1., 1.) * (1. - a) + Color::new(0.5, 0.7, 1.0) * a
 }

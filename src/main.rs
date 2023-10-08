@@ -11,7 +11,15 @@ fn main() {
         fs::remove_file(path).unwrap();
     }
 
-    let mut file = File::create(path);
+    let mut file = File::create(path).unwrap();
+
+    // image dimensions
+
+    let image_width = 256;
+    let image_height = 256;
+
+    // write basic ppm info to file
+    write!(file, "P3\n {} {}\n255\n", image_width, image_height).unwrap();
 
     println!("Hello, world!");
 }

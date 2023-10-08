@@ -9,6 +9,6 @@ impl Color {
     }
 
     pub fn to_string(&self) -> String {
-        format!["{} {} {}", self.r, self.g, self.b]
+        format!["{} {} {}\n", self.r, self.g, self.b]
     }
 }

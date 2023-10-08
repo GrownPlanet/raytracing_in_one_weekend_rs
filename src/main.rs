@@ -19,7 +19,7 @@ fn main() {
     let image_height = 256;
 
     // write basic ppm info to file
-    write!(file, "P3\n {} {}\n255\n", image_width, image_height).unwrap();
+    write!(file, "P3\n{} {}\n255\n", image_width, image_height).unwrap();
 
     for j in 0..image_height {
         for i in 0..image_width {

@@ -80,8 +80,11 @@ fn main() {
 }
 
 fn ray_color(ray: &Ray) -> Color {
+    // change the vector to a value between `-1` and `1`
     let unit_direcion = ray.dir.unit_vector();
+    // map teh value from `-1` to `1` to a value between `0` and `1`
     let a = 0.5 * (unit_direcion.y + 1.);
 
+    // if a is 0, draw white, if 1 draw blue and inbetween
     Color::new(1., 1., 1.) * (1. - a) + Color::new(0.5, 0.7, 1.0) * a
 }

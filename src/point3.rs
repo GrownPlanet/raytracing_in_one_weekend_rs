@@ -32,6 +32,7 @@ impl Point3 {
         self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
     }
 
+    // change vector coordinates to a value between `-1` and `1`
     pub fn unit_vector(&self) -> Self {
         self.clone() / self.len()
     }

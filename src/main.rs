@@ -21,5 +21,13 @@ fn main() {
     // write basic ppm info to file
     write!(file, "P3\n {} {}\n255\n", image_width, image_height).unwrap();
 
-    println!("Hello, world!");
+    for j in 0..image_height {
+        for i in 0..image_width {
+            let r = j;
+            let g = 0;
+            let b = i;
+
+            write!(file, "{} {} {}\n", r, g, b).unwrap();
+        }
+    }
 }

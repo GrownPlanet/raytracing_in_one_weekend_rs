@@ -24,6 +24,7 @@ fn main() {
     write!(file, "P3\n{} {}\n255\n", image_width, image_height).unwrap();
 
     for j in 0..image_height {
+        println!("Scanlines remaining: {}", (image_height - j));
         for i in 0..image_width {
             let r = j;
             let g = 0;
@@ -32,4 +33,5 @@ fn main() {
             write!(file, "{} {} {}\n", r, g, b).unwrap();
         }
     }
+    println!("-------------- Done --------------")
 }

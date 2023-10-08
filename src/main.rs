@@ -4,7 +4,10 @@ use std::{
     path::Path,
 };
 
+pub mod color;
 pub mod point3;
+
+use crate::color::Color;
 
 fn main() {
     // open file to put image in
@@ -26,11 +29,9 @@ fn main() {
     for j in 0..image_height {
         println!("Scanlines remaining: {}", (image_height - j));
         for i in 0..image_width {
-            let r = j;
-            let g = 0;
-            let b = i;
+            let pixel_color = Color::new(j as f64, 0., i as f64);
 
-            write!(file, "{} {} {}\n", r, g, b).unwrap();
+            write!(file, "{}", pixel_color.to_string()).unwrap();
         }
     }
     println!("-------------- Done --------------")

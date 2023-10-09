@@ -81,9 +81,11 @@ fn main() {
 
 fn hit_sphere(center: &Point3, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.orig.clone() - center.clone();
+
     let a = Point3::dot(&ray.dir, &ray.dir);
     let b = 2. * Point3::dot(&oc, &ray.dir);
     let c = Point3::dot(&oc, &oc) - radius.powi(2);
+
     let discriminant = b * b - 4. * a * c;
 
     if discriminant < 0. {

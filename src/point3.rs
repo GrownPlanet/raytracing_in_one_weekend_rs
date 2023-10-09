@@ -28,7 +28,7 @@ impl Point3 {
         self.len_squared().sqrt()
     }
 
-    fn len_squared(&self) -> f64 {
+    pub fn len_squared(&self) -> f64 {
         self.x.powi(2) + self.y.powi(2) + self.z.powi(2)
     }
 

@@ -63,7 +63,7 @@ fn main() {
     write!(file, "P3\n{} {}\n255\n", image_width, image_height).unwrap();
 
     for j in 0..image_height {
-        println!("Scanlines remaining: {}", (image_height - j));
+        print!("Scanlines remaining: {} \r", (image_height - j));
         for i in 0..image_width {
             let pixel_center = pixel00_loc.clone()
                 + (pixel_delta_u.clone() * i as f64)

@@ -1,5 +1,6 @@
 use crate::{point3::Point3, ray::Ray};
 
+#[derive(Clone)]
 pub struct HitRecord {
     pub point: Point3,
     pub normal: Point3,

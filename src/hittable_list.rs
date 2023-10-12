@@ -1,4 +1,4 @@
-use crate::{hittable::HitRecord, hittable::Hittable, point3::Point3, ray::Ray};
+use crate::{hittable::HitRecord, hittable::Hittable, ray::Ray};
 
 pub struct HittableList {
     pub objects: Vec<Box<dyn Hittable>>,

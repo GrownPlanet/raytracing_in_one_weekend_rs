@@ -1,28 +1,21 @@
-use crate::{
-    hittable::HitRecord,
-    hittable::Hittable,
-    point3::Point3,
-    ray::{self, Ray},
-};
+use crate::{hittable::HitRecord, hittable::Hittable, point3::Point3, ray::Ray};
 
-struct HittableList {
+pub struct HittableList {
     pub objects: Vec<Box<dyn Hittable>>,
 }
 
 impl HittableList {
+    pub fn new(objects: Vec<Box<dyn Hittable>>) -> Self {
+        Self { objects }
+    }
+
     pub fn push(&mut self, hittable: Box<dyn Hittable>) {
         self.objects.push(hittable);
     }
 
     pub fn hit(&self, ray: &Ray, rayt_min: f64, rayt_max: f64, hit_record: &mut HitRecord) -> bool {
         // temp_rec needs to be initialized in order to get passed into object.hit
-        let mut temp_rec: HitRecord = HitRecord {
-            point: Point3::new(0., 0., 0.),
-            normal: Point3::new(0., 0., 0.),
-            t: 0.,
-            front_face: false,
-        };
-
+        let mut temp_rec: HitRecord = HitRecord::default();
         let mut hit_anything: bool = false;
         let mut closest_so_far = rayt_max;
 

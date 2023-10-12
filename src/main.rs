@@ -11,10 +11,11 @@ pub mod point3;
 pub mod ray;
 pub mod sphere;
 
+use hittable::HitRecord;
 use ray::Ray;
 
-use crate::color::Color;
 use crate::point3::Point3;
+use crate::{color::Color, hittable_list::HittableList, sphere::Sphere};
 
 fn main() {
     // open file to put image in
@@ -34,6 +35,12 @@ fn main() {
     if image_height < 1 {
         image_height = 1;
     }
+
+    // world
+    let world = HittableList::new(vec![
+        Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.5)),
+        Box::new(Sphere::new(Point3::new(0., -100.5, 0.), 100.)),
+    ]);
 
     // camera
     let focal_length = 1.;
@@ -74,7 +81,7 @@ fn main() {
 
             let ray = Ray::new(camera_center.clone(), ray_direction);
 
-            let pixel_color = ray_color(&ray);
+            let pixel_color = ray_color(&ray, &world);
 
             write!(file, "{}", pixel_color.to_string()).unwrap();
         }
@@ -82,27 +89,13 @@ fn main() {
     println!("-------------- Done --------------")
 }
 
-fn hit_sphere(center: &Point3, radius: f64, ray: &Ray) -> f64 {
-    let oc = ray.orig.clone() - center.clone();
+fn ray_color(ray: &Ray, world: &HittableList) -> Color {
+    let mut record = HitRecord::default();
 
-    let a = ray.dir.len_squared();
-    let half_b = Point3::dot(&oc, &ray.dir);
-    let c = oc.len_squared() - radius.powi(2);
-
-    let discriminant = half_b.powi(2) - a * c;
-
-    if discriminant < 0. {
-        return -1.;
-    }
-    (-half_b - discriminant.sqrt()) / a
-}
-
-fn ray_color(ray: &Ray) -> Color {
-    let t = hit_sphere(&Point3::new(0., 0., -1.), 0.5, ray);
-    if t > 0. {
-        let n = (ray.at(t) - Point3::new(0., 0., -1.)).unit_vector();
-        // map `-1` to `1` to `0` to `1`
-        return Color::new(n.x + 1., n.y + 1., n.z + 1.) * 0.5;
+    if world.hit(ray, 0., f64::MAX, &mut record) {
+        return (Color::new(record.normal.x, record.normal.y, record.normal.z)
+            + Color::new(1., 1., 1.))
+            * 0.5;
     }
 
     // change the vector to a value between `-1` and `1`

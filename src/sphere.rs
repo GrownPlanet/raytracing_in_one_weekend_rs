@@ -10,7 +10,7 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    fn new(center: Point3, radius: f64) -> Self {
+    pub fn new(center: Point3, radius: f64) -> Self {
         Self { center, radius }
     }
 }

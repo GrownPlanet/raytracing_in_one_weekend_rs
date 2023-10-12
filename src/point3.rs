@@ -1,6 +1,6 @@
 use std::ops;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Point3 {
     pub x: f64,
     pub y: f64,

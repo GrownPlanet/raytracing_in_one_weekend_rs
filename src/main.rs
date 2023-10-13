@@ -4,14 +4,16 @@ use std::{
     path::Path,
 };
 
-pub mod color;
-pub mod hittable;
-pub mod hittable_list;
-pub mod point3;
-pub mod ray;
-pub mod sphere;
+mod color;
+mod hittable;
+mod hittable_list;
+mod interval;
+mod point3;
+mod ray;
+mod sphere;
 
 use hittable::HitRecord;
+use interval::Interval;
 use ray::Ray;
 
 use crate::point3::Point3;
@@ -92,7 +94,7 @@ fn main() {
 fn ray_color(ray: &Ray, world: &HittableList) -> Color {
     let mut record = HitRecord::default();
 
-    if world.hit(ray, 0., f64::MAX, &mut record) {
+    if world.hit(ray, Interval::new(0., f64::MAX), &mut record) {
         return (Color::new(record.normal.x, record.normal.y, record.normal.z)
             + Color::new(1., 1., 1.))
             * 0.5;

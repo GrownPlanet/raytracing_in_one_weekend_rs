@@ -8,9 +8,9 @@ impl Interval {
         Self { min, max }
     }
 
-    pub fn contains(&self, x: f64) -> bool {
-        self.min <= x && self.max >= x
-    }
+    // pub fn contains(&self, x: f64) -> bool {
+    //     self.min <= x && self.max >= x
+    // }
 
     pub fn surrounds(&self, x: f64) -> bool {
         self.min < x && self.max > x

@@ -16,13 +16,13 @@ impl Point3 {
         p1.x * p2.x + p1.y * p2.y + p1.z * p2.z
     }
 
-    pub fn cross(p1: &Self, p2: &Self) -> Self {
-        Self {
-            x: p1.y * p2.z - p1.z * p2.y,
-            y: p1.z * p2.x - p1.x * p2.z,
-            z: p1.x * p2.y - p1.y * p2.x,
-        }
-    }
+    // pub fn cross(p1: &Self, p2: &Self) -> Self {
+    //     Self {
+    //         x: p1.y * p2.z - p1.z * p2.y,
+    //         y: p1.z * p2.x - p1.x * p2.z,
+    //         z: p1.x * p2.y - p1.y * p2.x,
+    //     }
+    // }
 
     pub fn len(&self) -> f64 {
         self.len_squared().sqrt()

@@ -9,9 +9,9 @@ impl HittableList {
         Self { objects }
     }
 
-    pub fn push(&mut self, hittable: Box<dyn Hittable>) {
-        self.objects.push(hittable);
-    }
+    // pub fn push(&mut self, hittable: Box<dyn Hittable>) {
+    //     self.objects.push(hittable);
+    // }
 
     pub fn hit(&self, ray: &Ray, rayt: Interval, hit_record: &mut HitRecord) -> bool {
         // temp_rec needs to be initialized in order to get passed into object.hit

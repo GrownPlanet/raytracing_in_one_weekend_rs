@@ -33,7 +33,7 @@ fn main() {
         Box::new(Sphere::new(Point3::new(0., -100.5, 0.), 100.)),
     ]);
 
-    let mut camera = Camera::init(16. / 9., 400, 10, file);
+    let mut camera = Camera::init(16. / 9., 400, 10, 50, file);
 
     let start = Instant::now();
     camera.render(&world);

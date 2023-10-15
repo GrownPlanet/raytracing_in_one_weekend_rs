@@ -17,7 +17,9 @@ pub struct Camera {
     pixel00: Point3,
     pixel_delta_u: Point3,
     pixel_delta_v: Point3,
+
     sampels_per_pixel: i32,
+    max_depth: i32,
 
     file: File,
 }
@@ -27,6 +29,7 @@ impl Camera {
         aspect_ratio: f64,
         image_width: i32,
         sampels_per_pixel: i32,
+        max_depth: i32,
         mut file: File,
     ) -> Self {
         // calculate image height
@@ -69,8 +72,9 @@ impl Camera {
             pixel00,
             pixel_delta_u,
             pixel_delta_v,
-            file,
             sampels_per_pixel,
+            max_depth,
+            file,
         }
     }
 
@@ -83,7 +87,7 @@ impl Camera {
 
                 for _ in 0..self.sampels_per_pixel {
                     let r = self.get_ray(i, j);
-                    pixel_color = pixel_color + Self::ray_color(&r, world);
+                    pixel_color = pixel_color + Self::ray_color(&r, world, self.max_depth);
                 }
 
                 write!(
@@ -97,12 +101,16 @@ impl Camera {
         println!("-------------- Done --------------")
     }
 
-    fn ray_color(ray: &Ray, world: &HittableList) -> Color {
+    fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Color {
+        if depth <= 0 {
+            return Color::new(0., 0., 0.);
+        }
+
         let mut record = HitRecord::default();
 
         if world.hit(ray, Interval::new(0., f64::MAX), &mut record) {
             let direction = Point3::random_on_hemisphere(&record.normal);
-            return Self::ray_color(&Ray::new(record.point, direction), world) * 0.5;
+            return Self::ray_color(&Ray::new(record.point, direction), world, depth - 1) * 0.5;
         }
 
         // change the vector to a value between `-1` and `1`

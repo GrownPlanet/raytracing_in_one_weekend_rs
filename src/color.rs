@@ -10,12 +10,14 @@ impl Color {
         Self { r, g, b }
     }
 
-    pub fn to_string(&self) -> String {
+    pub fn to_string(&self, sampels_per_pixel: f64) -> String {
+        let scale = 1. / sampels_per_pixel;
+
         format![
             "{} {} {}\n",
-            self.r * 255.999,
-            self.g * 255.999,
-            self.b * 255.999
+            self.r * scale * 256.,
+            self.g * scale * 256.,
+            self.b * scale * 256.
         ]
     }
 }

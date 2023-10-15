@@ -1,5 +1,7 @@
 use std::{fs::File, io::prelude::*};
 
+use rand::Rng;
+
 use crate::hittable::HitRecord;
 use crate::interval::Interval;
 use crate::ray::Ray;
@@ -15,12 +17,18 @@ pub struct Camera {
     pixel00: Point3,
     pixel_delta_u: Point3,
     pixel_delta_v: Point3,
+    sampels_per_pixel: i32,
 
     file: File,
 }
 
 impl Camera {
-    pub fn init(aspect_ratio: f64, image_width: i32, mut file: File) -> Self {
+    pub fn init(
+        aspect_ratio: f64,
+        image_width: i32,
+        sampels_per_pixel: i32,
+        mut file: File,
+    ) -> Self {
         // calculate image height
         let mut image_height = (image_width as f64 / aspect_ratio) as i32;
         if image_height < 1 {
@@ -62,24 +70,27 @@ impl Camera {
             pixel_delta_u,
             pixel_delta_v,
             file,
+            sampels_per_pixel,
         }
     }
 
     pub fn render(&mut self, world: &HittableList) {
         for j in 0..self.image_height {
-            print!("Scanlines remaining: {} \r", (self.image_height - j));
+            // print!("Scanlines remaining: {} \r", (self.image_height - j));
             for i in 0..self.image_width {
-                let pixel_center = self.pixel00.clone()
-                    + (self.pixel_delta_u.clone() * i as f64)
-                    + (self.pixel_delta_v.clone() * j as f64);
+                let mut pixel_color = Color::new(0., 0., 0.);
 
-                let ray_direction = pixel_center - self.center.clone();
+                for _ in 0..self.sampels_per_pixel {
+                    let r = self.get_ray(i, j);
+                    pixel_color = pixel_color + Self::ray_color(&r, world);
+                }
 
-                let ray = Ray::new(self.center.clone(), ray_direction);
-
-                let pixel_color = Self::ray_color(&ray, world);
-
-                write!(self.file, "{}", pixel_color.to_string()).unwrap();
+                write!(
+                    self.file,
+                    "{}",
+                    pixel_color.to_string(self.sampels_per_pixel as f64)
+                )
+                .unwrap();
             }
         }
         println!("-------------- Done --------------")
@@ -101,5 +112,28 @@ impl Camera {
 
         // if a is 0, draw white, if 1 draw blue and inbetween
         Color::new(1., 1., 1.) * (1. - a) + Color::new(0.5, 0.7, 1.0) * a
+    }
+
+    fn get_ray(&self, i: i32, j: i32) -> Ray {
+        let pixel_center = self.pixel00.clone()
+            + (self.pixel_delta_u.clone() * i as f64)
+            + (self.pixel_delta_v.clone() * j as f64);
+        let pixel_sample = pixel_center + self.pixel_sample_square();
+
+        let ray_origin = self.center.clone();
+        let ray_dir = pixel_sample - ray_origin.clone();
+
+        return Ray::new(ray_origin, ray_dir);
+    }
+
+    fn pixel_sample_square(&self) -> Point3 {
+        let mut rng = rand::thread_rng();
+
+        let mut px: f64 = rng.gen();
+        px *= -0.5;
+        let mut py: f64 = rng.gen();
+        py *= -0.5;
+
+        return (self.pixel_delta_u.clone() * px) + (self.pixel_delta_v.clone() * py);
     }
 }

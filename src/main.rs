@@ -1,6 +1,7 @@
 use std::{
     fs::{self, File},
     path::Path,
+    time::Instant,
 };
 
 mod camera;
@@ -32,7 +33,10 @@ fn main() {
         Box::new(Sphere::new(Point3::new(0., -100.5, 0.), 100.)),
     ]);
 
-    let mut camera = Camera::init(16. / 9., 400, file);
+    let mut camera = Camera::init(16. / 9., 400, 10, file);
 
+    let start = Instant::now();
     camera.render(&world);
+    let duration = start.elapsed();
+    println!("time to render image: {:?}", duration);
 }

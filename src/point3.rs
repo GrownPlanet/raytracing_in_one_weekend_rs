@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::ops;
 
 #[derive(Clone, Default)]
@@ -35,6 +36,43 @@ impl Point3 {
     // change vector coordinates to a value between `-1` and `1`
     pub fn unit_vector(&self) -> Self {
         self.clone() / self.len()
+    }
+
+    fn random(min: f64, max: f64) -> Self {
+        let mut rng = rand::thread_rng();
+
+        let random_x: f64 = rng.gen_range(min..max);
+        let random_y: f64 = rng.gen_range(min..max);
+        let random_z: f64 = rng.gen_range(min..max);
+
+        Self {
+            x: random_x,
+            y: random_y,
+            z: random_z,
+        }
+    }
+
+    fn random_unit_sphere() -> Self {
+        loop {
+            let p = Self::random(-1., 1.);
+            if p.len_squared() < 1. {
+                return p;
+            }
+        }
+    }
+
+    fn random_unit_vector() -> Self {
+        Self::unit_vector(&Self::random_unit_sphere())
+    }
+
+    pub fn random_on_hemisphere(normal: &Self) -> Self {
+        let on_unit_sphere = Self::random_unit_vector();
+
+        if Self::dot(&on_unit_sphere, normal) > 0. {
+            return on_unit_sphere;
+        } else {
+            return on_unit_sphere * -1.;
+        }
     }
 }
 

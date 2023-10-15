@@ -76,7 +76,8 @@ impl Camera {
 
     pub fn render(&mut self, world: &HittableList) {
         for j in 0..self.image_height {
-            // print!("Scanlines remaining: {} \r", (self.image_height - j));
+            print!("Scanlines remaining: {} \r", (self.image_height - j));
+            std::io::stdout().flush().unwrap();
             for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0., 0., 0.);
 
@@ -100,9 +101,8 @@ impl Camera {
         let mut record = HitRecord::default();
 
         if world.hit(ray, Interval::new(0., f64::MAX), &mut record) {
-            return (Color::new(record.normal.x, record.normal.y, record.normal.z)
-                + Color::new(1., 1., 1.))
-                * 0.5;
+            let direction = Point3::random_on_hemisphere(&record.normal);
+            return Self::ray_color(&Ray::new(record.point, direction), world) * 0.5;
         }
 
         // change the vector to a value between `-1` and `1`

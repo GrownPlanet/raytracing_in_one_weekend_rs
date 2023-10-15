@@ -52,17 +52,8 @@ impl Point3 {
         }
     }
 
-    fn random_unit_sphere() -> Self {
-        loop {
-            let p = Self::random(-1., 1.);
-            if p.len_squared() < 1. {
-                return p;
-            }
-        }
-    }
-
     fn random_unit_vector() -> Self {
-        Self::unit_vector(&Self::random_unit_sphere())
+        Self::unit_vector(&Self::random(-1., 1.))
     }
 
     pub fn random_on_hemisphere(normal: &Self) -> Self {

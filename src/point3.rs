@@ -52,19 +52,19 @@ impl Point3 {
         }
     }
 
-    fn random_unit_vector() -> Self {
+    pub fn random_unit_vector() -> Self {
         Self::unit_vector(&Self::random(-1., 1.))
     }
 
-    pub fn random_on_hemisphere(normal: &Self) -> Self {
-        let on_unit_sphere = Self::random_unit_vector();
+    // pub fn random_on_hemisphere(normal: &Self) -> Self {
+    //     let on_unit_sphere = Self::random_unit_vector();
 
-        if Self::dot(&on_unit_sphere, normal) > 0. {
-            return on_unit_sphere;
-        } else {
-            return on_unit_sphere * -1.;
-        }
-    }
+    //     if Self::dot(&on_unit_sphere, normal) > 0. {
+    //         return on_unit_sphere;
+    //     } else {
+    //         return on_unit_sphere * -1.;
+    //     }
+    // }
 }
 
 // opperator overloading

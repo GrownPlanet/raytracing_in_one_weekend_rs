@@ -65,6 +65,10 @@ impl Point3 {
     //         return on_unit_sphere * -1.;
     //     }
     // }
+
+    pub fn near_zero(&self) -> bool {
+        self.x < 0.000000001 && self.y < 0.000000001 && self.z < 0.000000001
+    }
 }
 
 // opperator overloading

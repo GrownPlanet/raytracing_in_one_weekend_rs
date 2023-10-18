@@ -9,14 +9,18 @@ mod color;
 mod hittable;
 mod hittable_list;
 mod interval;
+mod material;
 mod point3;
 mod ray;
 mod sphere;
 
 use camera::Camera;
+use color::Color;
 use hittable_list::HittableList;
 use point3::Point3;
 use sphere::Sphere;
+
+use crate::material::Lambertian;
 
 fn main() {
     // open file to put image in
@@ -27,10 +31,20 @@ fn main() {
 
     let file = File::create(path).unwrap();
 
+    let material = Lambertian::new(Color::new(0., 0., 0.));
+
     // world
     let world = HittableList::new(vec![
-        Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.5)),
-        Box::new(Sphere::new(Point3::new(0., -100.5, 0.), 100.)),
+        Box::new(Sphere::new(
+            Point3::new(0., 0., -1.),
+            0.5,
+            Box::new(material.clone()),
+        )),
+        Box::new(Sphere::new(
+            Point3::new(0., -100.5, 0.),
+            100.,
+            Box::new(material.clone()),
+        )),
     ]);
 
     let mut camera = Camera::init(16. / 9., 400, 10, 50, file);

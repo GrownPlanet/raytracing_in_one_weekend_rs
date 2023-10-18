@@ -1,11 +1,16 @@
-use crate::{interval::Interval, point3::Point3, ray::Ray};
+use crate::{
+    interval::Interval,
+    material::{Lambertian, Material},
+    point3::Point3,
+    ray::Ray,
+};
 
-#[derive(Default)]
 pub struct HitRecord {
     pub point: Point3,
     pub normal: Point3,
     pub t: f64,
     pub front_face: bool,
+    pub material: Box<dyn Material>,
 }
 
 impl HitRecord {
@@ -16,6 +21,16 @@ impl HitRecord {
             outward_normal.clone()
         } else {
             outward_normal.clone() * -1.
+        }
+    }
+
+    pub fn blank() -> Self {
+        Self {
+            point: Point3::default(),
+            normal: Point3::default(),
+            t: 0.,
+            front_face: false,
+            material: Box::new(Lambertian::default()),
         }
     }
 }

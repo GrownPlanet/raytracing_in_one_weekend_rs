@@ -1,5 +1,6 @@
 use crate::point3::Point3;
 
+#[derive(Default)]
 pub struct Ray {
     pub orig: Point3,
     pub dir: Point3,

@@ -15,7 +15,7 @@ impl HittableList {
 
     pub fn hit(&self, ray: &Ray, rayt: Interval, hit_record: &mut HitRecord) -> bool {
         // temp_rec needs to be initialized in order to get passed into object.hit
-        let mut temp_rec: HitRecord = HitRecord::default();
+        let mut temp_rec: HitRecord = HitRecord::blank();
         let mut hit_anything: bool = false;
         let mut closest_so_far = rayt.max;
 

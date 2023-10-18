@@ -1,6 +1,7 @@
 use crate::{
     hittable::{HitRecord, Hittable},
     interval::Interval,
+    material::Material,
     point3::Point3,
     ray::Ray,
 };
@@ -8,11 +9,16 @@ use crate::{
 pub struct Sphere {
     center: Point3,
     radius: f64,
+    material: Box<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64) -> Self {
-        Self { center, radius }
+    pub fn new(center: Point3, radius: f64, material: Box<dyn Material>) -> Self {
+        Self {
+            center,
+            radius,
+            material,
+        }
     }
 }
 

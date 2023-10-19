@@ -80,7 +80,7 @@ impl Camera {
 
     pub fn render(&mut self, world: &HittableList) {
         for j in 0..self.image_height {
-            print!("Scanlines remaining: {} \r", (self.image_height - j));
+            // print!("Scanlines remaining: {} \r", (self.image_height - j));
             std::io::stdout().flush().unwrap();
             for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0., 0., 0.);
@@ -103,7 +103,7 @@ impl Camera {
 
     fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Color {
         if depth <= 0 {
-            return Color::new(0., 0., 0.);
+            // return Color::new(0., 0., 0.);
         }
 
         let mut record = HitRecord::blank();
@@ -116,7 +116,7 @@ impl Camera {
                 .material
                 .scatter(ray, &record, &mut attenuation, &mut scatter)
             {
-                return Self::ray_color(&scatter, world, depth - 1) * attenuation;
+                return Self::ray_color(&scatter, world, depth - 1) * attenuation * 0.001;
             }
             return Color::default();
 

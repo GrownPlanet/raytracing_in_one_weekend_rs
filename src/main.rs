@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use std::{
     fs::{self, File},
     path::Path,
@@ -20,7 +22,7 @@ use hittable_list::HittableList;
 use point3::Point3;
 use sphere::Sphere;
 
-use crate::material::Lambertian;
+use crate::material::{Lambertian, Metal};
 
 fn main() {
     // open file to put image in
@@ -36,12 +38,17 @@ fn main() {
         Box::new(Sphere::new(
             Point3::new(0., 0., -1.),
             0.5,
-            Box::new(Lambertian::new(Color::new(255., 255., 255.))),
+            Rc::new(Lambertian::new(Color::new(255., 255., 255.))),
         )),
         Box::new(Sphere::new(
-            Point3::new(0., -100.5, 0.),
+            Point3::new(0., -100.5, -1.),
             100.,
-            Box::new(Lambertian::new(Color::new(255., 255., 255.))),
+            Rc::new(Lambertian::new(Color::new(255., 255., 255.))),
+        )),
+        Box::new(Sphere::new(
+            Point3::new(-1., 0., -1.),
+            0.5,
+            Rc::new(Metal::new(Color::new(0., 100., 100.))),
         )),
     ]);
 

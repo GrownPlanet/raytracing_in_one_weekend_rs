@@ -25,7 +25,6 @@ impl HittableList {
                 closest_so_far = temp_rec.t;
 
                 // update hit record like this because it doesn't work when you update it all at once
-                // or i'm just stupid
                 hit_record.point = temp_rec.point.clone();
                 hit_record.normal = temp_rec.normal.clone();
                 hit_record.t = temp_rec.t;

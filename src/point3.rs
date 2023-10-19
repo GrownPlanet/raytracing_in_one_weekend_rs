@@ -17,6 +17,10 @@ impl Point3 {
         p1.x * p2.x + p1.y * p2.y + p1.z * p2.z
     }
 
+    pub fn reflect(vec: &Point3, normal: &Point3) -> Point3 {
+        return vec.clone() - normal.clone() * Self::dot(vec, normal) * 2.;
+    }
+
     // pub fn cross(p1: &Self, p2: &Self) -> Self {
     //     Self {
     //         x: p1.y * p2.z - p1.z * p2.y,

@@ -109,19 +109,16 @@ impl Camera {
         let mut record = HitRecord::blank();
 
         if world.hit(ray, Interval::new(0.001, f64::MAX), &mut record) {
-            let mut scatter = Ray::default();
-            let mut attenuation = Color::default();
+            let mut scatterd = Ray::default();
+            let mut attentuation = Color::default();
 
             if record
                 .material
-                .scatter(ray, &record, &mut attenuation, &mut scatter)
+                .scatter(ray, &record, &mut attentuation, &mut scatterd)
             {
-                return Self::ray_color(&scatter, world, depth - 1) * attenuation * 0.001;
+                return attentuation * Self::ray_color(&scatterd, world, depth - 1);
             }
             return Color::default();
-
-            // let direction = record.normal.clone() + Point3::random_unit_vector();
-            // return Self::ray_color(&Ray::new(record.point, direction), world, depth - 1) * 0.5;
         }
 
         // change the vector to a value between `-1` and `1`

@@ -41,14 +41,19 @@ fn main() {
             Rc::new(Lambertian::new(Color::new(255., 255., 255.))),
         )),
         Box::new(Sphere::new(
-            Point3::new(0., -100.5, -1.),
-            100.,
-            Rc::new(Lambertian::new(Color::new(255., 255., 255.))),
+            Point3::new(1., 0., -1.),
+            0.5,
+            Rc::new(Metal::new(Color::new(0., 100., 100.))),
         )),
         Box::new(Sphere::new(
             Point3::new(-1., 0., -1.),
             0.5,
             Rc::new(Metal::new(Color::new(0., 100., 100.))),
+        )),
+        Box::new(Sphere::new(
+            Point3::new(0., -100.5, -1.),
+            100.,
+            Rc::new(Lambertian::new(Color::new(255., 255., 255.))),
         )),
     ]);
 

@@ -64,7 +64,7 @@ impl Material for Metal {
     ) -> bool {
         let reflected = Point3::reflect(&ray_in.dir.unit_vector(), &record.normal);
 
-        println!("{} {} {}", self.albedo.r, self.albedo.g, self.albedo.b);
+        // println!("{} {} {}", self.albedo.r, self.albedo.g, self.albedo.b);
 
         *scattered = Ray::new(record.point.clone(), reflected);
         *attentuation = self.albedo.clone();

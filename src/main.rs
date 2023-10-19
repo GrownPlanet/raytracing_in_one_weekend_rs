@@ -52,7 +52,7 @@ fn main() {
         )),
     ]);
 
-    let mut camera = Camera::init(16. / 9., 400, 10, 50, file);
+    let mut camera = Camera::init(16. / 9., 400, 100, 50, file);
 
     let start = Instant::now();
     camera.render(&world);

@@ -29,6 +29,7 @@ impl HittableList {
                 hit_record.normal = temp_rec.normal.clone();
                 hit_record.t = temp_rec.t;
                 hit_record.front_face = temp_rec.front_face;
+                hit_record.material = temp_rec.material.clone();
             }
         }
 

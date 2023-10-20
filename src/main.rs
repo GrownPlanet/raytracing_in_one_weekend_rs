@@ -48,7 +48,7 @@ fn main() {
         Box::new(Sphere::new(
             Point3::new(-1., 0., -1.),
             0.5,
-            Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5), 0.)),
+            Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5), 0.2)),
         )),
         Box::new(Sphere::new(
             Point3::new(0., -100.5, -1.),

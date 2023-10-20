@@ -38,22 +38,22 @@ fn main() {
         Box::new(Sphere::new(
             Point3::new(0., 0., -1.),
             0.5,
-            Rc::new(Lambertian::new(Color::new(255., 255., 255.))),
+            Rc::new(Lambertian::new(Color::new(0.3, 0.1, 0.7))),
         )),
         Box::new(Sphere::new(
             Point3::new(1., 0., -1.),
             0.5,
-            Rc::new(Metal::new(Color::new(0., 100., 100.))),
+            Rc::new(Metal::new(Color::new(0.7, 0.2, 0.4))),
         )),
         Box::new(Sphere::new(
             Point3::new(-1., 0., -1.),
             0.5,
-            Rc::new(Metal::new(Color::new(0., 100., 100.))),
+            Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5))),
         )),
         Box::new(Sphere::new(
             Point3::new(0., -100.5, -1.),
             100.,
-            Rc::new(Lambertian::new(Color::new(255., 255., 255.))),
+            Rc::new(Lambertian::new(Color::new(0.3, 0.6, 0.1))),
         )),
     ]);
 

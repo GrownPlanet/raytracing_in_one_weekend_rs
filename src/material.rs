@@ -30,6 +30,7 @@ impl Material for Lambertian {
         scattered: &mut Ray,
     ) -> bool {
         let mut direction = record.normal.clone() + Point3::random_unit_vector();
+        // let mut direction = record.normal.clone();
 
         if direction.near_zero() {
             direction = record.normal.clone();

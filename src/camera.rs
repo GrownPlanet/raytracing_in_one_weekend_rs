@@ -116,7 +116,7 @@ impl Camera {
                 .material
                 .scatter(ray, &record, &mut attentuation, &mut scatterd)
             {
-                return attentuation * Self::ray_color(&scatterd, world, depth - 1) * 0.003;
+                return attentuation * Self::ray_color(&scatterd, world, depth - 1);
             }
             return Color::default();
         }

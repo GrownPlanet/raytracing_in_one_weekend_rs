@@ -1,4 +1,6 @@
 use rand::Rng;
+use std::io::Write;
+use std::sync::Arc;
 
 use crate::hittable::HitRecord;
 use crate::interval::Interval;
@@ -76,15 +78,10 @@ impl Camera {
         }
     }
 
-    pub fn render_part(&self, world: &HittableList, part: i32, part_a: i32) -> String {
-        let sqrt_a = (part_a as f64).sqrt();
-        let column = (part as f64 % sqrt_a) as i32;
-        let row = (part as f64 / sqrt_a) as i32;
-
-        let start_x = column * (self.image_width as f64 / sqrt_a) as i32;
-        let end_x = (column + 1) * (self.image_width as f64 / sqrt_a) as i32;
-        let start_y = row * (self.image_height as f64 / sqrt_a) as i32;
-        let end_y = (row + 1) * (self.image_height as f64 / sqrt_a) as i32;
+    pub fn render_part(&self, world: &Arc<HittableList>, part: i32, part_a: i32) -> String {
+        println!(":(");
+        let start_y = part * (self.image_height as f64 / part_a as f64) as i32;
+        let end_y = (part + 1) * (self.image_height as f64 / part_a as f64) as i32;
 
         let mut result_string = String::new();
 
@@ -92,7 +89,7 @@ impl Camera {
             // print!("Scanlines remaining: {} \r", (self.image_height - j));
             // std::io::stdout().flush().unwrap();
 
-            for i in start_x..end_x {
+            for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0., 0., 0.);
 
                 for _ in 0..self.sampels_per_pixel {
@@ -107,10 +104,14 @@ impl Camera {
             }
         }
         println!("-------------- part {}: Done --------------", part);
-        return result_string;
+
+        // println!("{}", result_string);
+
+        result_string
+        // String::new()
     }
 
-    fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Color {
+    fn ray_color(ray: &Ray, world: &Arc<HittableList>, depth: i32) -> Color {
         if depth <= 0 {
             return Color::new(0., 0., 0.);
         }

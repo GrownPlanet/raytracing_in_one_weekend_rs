@@ -3,9 +3,7 @@ use std::{
     io::prelude::*,
     path::Path,
     rc::Rc,
-    string,
-    sync::{Arc, Mutex},
-    thread,
+    sync::Arc,
     time::Instant,
 };
 
@@ -23,6 +21,7 @@ use camera::Camera;
 use color::Color;
 use hittable_list::HittableList;
 use point3::Point3;
+use rayon::prelude::*;
 use sphere::Sphere;
 
 use crate::material::{Lambertian, Metal};
@@ -60,41 +59,34 @@ fn main() {
         )),
     ]));
 
-    let image_width = 800;
-    write!(file, "P3\n{} {}\n255\n", 800, 800).unwrap();
-    let part_a = 64;
-    let strings: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![String::new(); 64]));
+    let image_width = 300;
+    write!(file, "P3\n{} {}\n255\n", image_width, image_width).unwrap();
+    let part_a = 2;
 
-    let mut handles = vec![];
+    let camera = Arc::new(Camera::init(1., image_width, 10, 50));
 
-    let camera = Arc::new(Camera::init(1., image_width, 100, 50));
+    // let start = Instant::now();
 
-    let start = Instant::now();
-    for i in 0..part_a {
-        let cam = Arc::clone(&camera);
-        let w = Arc::clone(&world);
-        let strings = Arc::clone(&strings);
+    let strings: Vec<String> = (0..part_a)
+        .into_par_iter()
+        .map(|i| {
+            let cam = Arc::clone(&camera);
+            let w = Arc::clone(&world);
+            cam.render_part(&w, i, part_a)
+        })
+        .collect();
 
-        let handle = thread::spawn(move || {
-            let mut st = strings.lock().unwrap();
+    // let duration = start.elapsed();
 
-            st[i as usize] = cam.render_part(&w, i, part_a);
-        });
+    // let yay = String::new();
 
-        handles.push(handle);
-    }
+    // for s in strings.iter() {
+    //     yay.push_str(&s);
+    // }
 
-    for handle in handles {
-        handle.join().unwrap();
-    }
+    // let yay = strings.join("");
 
-    let duration = start.elapsed();
+    // write!(file, "{}", yay).unwrap();
 
-    let strings = strings.lock().unwrap();
-
-    let yay = strings.join("");
-
-    write!(file, "{}", yay).unwrap();
-
-    println!("time to render image: {:?}", duration);
+    // println!("time to render image: {:?}", duration);
 }

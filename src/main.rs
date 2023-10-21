@@ -61,14 +61,13 @@ fn main() {
     ]));
 
     let image_width = 800;
-    let ih = (image_width as f64 / (16. / 9.)) as i32;
-    write!(file, "P3\n{} {}\n255\n", 800, ih).unwrap();
-    let part_a = 12;
+    write!(file, "P3\n{} {}\n255\n", 800, 800).unwrap();
+    let part_a = 64;
     let strings: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![String::new(); 64]));
 
     let mut handles = vec![];
 
-    let camera = Arc::new(Camera::init(16. / 9., image_width, 100, 50));
+    let camera = Arc::new(Camera::init(1., image_width, 100, 50));
 
     let start = Instant::now();
     for i in 0..part_a {

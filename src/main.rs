@@ -1,8 +1,10 @@
-use std::rc::Rc;
-
 use std::{
     fs::{self, File},
+    io::prelude::*,
     path::Path,
+    rc::Rc,
+    sync::{Arc, Mutex},
+    thread,
     time::Instant,
 };
 
@@ -31,10 +33,12 @@ fn main() {
         fs::remove_file(path).unwrap();
     }
 
-    let file = File::create(path).unwrap();
+    let mut file = File::create(path).unwrap();
+
+    write!(file, "P3\n{} {}\n255\n", 100, 100).unwrap();
 
     // world
-    let world = HittableList::new(vec![
+    let world = Arc::new(HittableList::new(vec![
         Box::new(Sphere::new(
             Point3::new(0., 0., -1.),
             0.5,
@@ -55,12 +59,43 @@ fn main() {
             100.,
             Rc::new(Lambertian::new(Color::new(0.3, 0.6, 0.1))),
         )),
-    ]);
+    ]));
 
-    let mut camera = Camera::init(16. / 9., 400, 100, 50, file);
+    let image_width = 400;
+    let part_a = 16;
+    let mut strings: Arc<Mutex<[&str; 64]>> = Arc::new(Mutex::new([""; 64]));
+
+    let mut handles = vec![];
+
+    let mut camera = Arc::new(Camera::init(1., image_width, 100, 50));
 
     let start = Instant::now();
-    camera.render(&world);
+    for i in 0..part_a {
+        let strings = Arc::clone(&strings);
+
+        let handle = thread::spawn(move || {
+            let mut st = strings.lock().unwrap();
+
+            let cam = Camera::init(1., image_width, 100, 50);
+            let world = HittableList::new(vec![Box::new(Sphere::new(
+                Point3::new(0., 0., -1.),
+                0.5,
+                Rc::new(Lambertian::new(Color::new(0.3, 0.1, 0.7))),
+            ))]);
+
+            st[i as usize] = cam.render_part(&world, i, part_a);
+        });
+
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
     let duration = start.elapsed();
+
+    // write!(file, "{}", ps).unwrap();
+
     println!("time to render image: {:?}", duration);
 }

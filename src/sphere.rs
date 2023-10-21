@@ -1,3 +1,4 @@
+use std::marker::{Send, Sync};
 use std::rc::Rc;
 
 use crate::{
@@ -11,11 +12,11 @@ use crate::{
 pub struct Sphere {
     center: Point3,
     radius: f64,
-    material: Rc<dyn Material>,
+    material: Rc<dyn Material + Sync + Send>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64, material: Rc<dyn Material>) -> Self {
+    pub fn new(center: Point3, radius: f64, material: Rc<dyn Material + Sync + Send>) -> Self {
         Self {
             center,
             radius,
@@ -23,6 +24,9 @@ impl Sphere {
         }
     }
 }
+
+unsafe impl Send for Sphere {}
+unsafe impl Sync for Sphere {}
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, rayt: Interval, hit_record: &mut HitRecord) -> bool {

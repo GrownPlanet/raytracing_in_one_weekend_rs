@@ -3,6 +3,7 @@ use std::{
     io::prelude::*,
     path::Path,
     rc::Rc,
+    string,
     sync::{Arc, Mutex},
     thread,
     time::Instant,
@@ -35,8 +36,6 @@ fn main() {
 
     let mut file = File::create(path).unwrap();
 
-    write!(file, "P3\n{} {}\n255\n", 100, 100).unwrap();
-
     // world
     let world = Arc::new(HittableList::new(vec![
         Box::new(Sphere::new(
@@ -61,13 +60,15 @@ fn main() {
         )),
     ]));
 
-    let image_width = 400;
-    let part_a = 16;
-    let mut strings: Arc<Mutex<[&str; 64]>> = Arc::new(Mutex::new([""; 64]));
+    let image_width = 800;
+    let ih = (image_width as f64 / (16. / 9.)) as i32;
+    write!(file, "P3\n{} {}\n255\n", 800, ih).unwrap();
+    let part_a = 12;
+    let strings: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![String::new(); 64]));
 
     let mut handles = vec![];
 
-    let mut camera = Arc::new(Camera::init(1., image_width, 100, 50));
+    let camera = Arc::new(Camera::init(16. / 9., image_width, 100, 50));
 
     let start = Instant::now();
     for i in 0..part_a {
@@ -78,9 +79,7 @@ fn main() {
         let handle = thread::spawn(move || {
             let mut st = strings.lock().unwrap();
 
-            let push_string = cam.render_part(&w, i, part_a);
-
-            st[i as usize] = "to do";
+            st[i as usize] = cam.render_part(&w, i, part_a);
         });
 
         handles.push(handle);
@@ -92,7 +91,11 @@ fn main() {
 
     let duration = start.elapsed();
 
-    // write!(file, "{}", ps).unwrap();
+    let strings = strings.lock().unwrap();
+
+    let yay = strings.join("");
+
+    write!(file, "{}", yay).unwrap();
 
     println!("time to render image: {:?}", duration);
 }

@@ -1,11 +1,11 @@
 use crate::{hittable::HitRecord, hittable::Hittable, interval::Interval, ray::Ray};
 
 pub struct HittableList {
-    pub objects: Vec<Box<dyn Hittable>>,
+    pub objects: Vec<Box<dyn Hittable + Send + Sync>>,
 }
 
 impl HittableList {
-    pub fn new(objects: Vec<Box<dyn Hittable>>) -> Self {
+    pub fn new(objects: Vec<Box<dyn Hittable + Send + Sync>>) -> Self {
         Self { objects }
     }
 

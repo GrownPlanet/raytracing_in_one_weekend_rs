@@ -71,19 +71,16 @@ fn main() {
 
     let start = Instant::now();
     for i in 0..part_a {
+        let cam = Arc::clone(&camera);
+        let w = Arc::clone(&world);
         let strings = Arc::clone(&strings);
 
         let handle = thread::spawn(move || {
             let mut st = strings.lock().unwrap();
 
-            let cam = Camera::init(1., image_width, 100, 50);
-            let world = HittableList::new(vec![Box::new(Sphere::new(
-                Point3::new(0., 0., -1.),
-                0.5,
-                Rc::new(Lambertian::new(Color::new(0.3, 0.1, 0.7))),
-            ))]);
+            let push_string = cam.render_part(&w, i, part_a);
 
-            st[i as usize] = cam.render_part(&world, i, part_a);
+            st[i as usize] = "to do";
         });
 
         handles.push(handle);

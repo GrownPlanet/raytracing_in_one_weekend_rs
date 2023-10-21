@@ -36,7 +36,7 @@ fn main() {
     let mut file = File::create(path).unwrap();
 
     // world
-    let world = Arc::new(HittableList::new(vec![
+    let world = HittableList::new(vec![
         Box::new(Sphere::new(
             Point3::new(0., 0., -1.),
             0.5,
@@ -57,36 +57,31 @@ fn main() {
             100.,
             Rc::new(Lambertian::new(Color::new(0.3, 0.6, 0.1))),
         )),
-    ]));
+    ]);
 
     let image_width = 300;
     write!(file, "P3\n{} {}\n255\n", image_width, image_width).unwrap();
-    let part_a = 2;
+    let part_a = 3;
 
-    let camera = Arc::new(Camera::init(1., image_width, 10, 50));
+    let camera = Camera::init(1., image_width, 100, 50);
 
-    // let start = Instant::now();
+    let start = Instant::now();
 
     let strings: Vec<String> = (0..part_a)
         .into_par_iter()
-        .map(|i| {
-            let cam = Arc::clone(&camera);
-            let w = Arc::clone(&world);
-            cam.render_part(&w, i, part_a)
-        })
+        .map(|i| camera.render_part(&world, i, part_a))
         .collect();
 
-    // let duration = start.elapsed();
+    let duration = start.elapsed();
+    println!("time to render image: {:?}", duration);
 
-    // let yay = String::new();
+    let mut yay = String::new();
 
-    // for s in strings.iter() {
-    //     yay.push_str(&s);
-    // }
+    for s in strings.iter() {
+        yay.push_str(&s);
+    }
 
     // let yay = strings.join("");
 
     // write!(file, "{}", yay).unwrap();
-
-    // println!("time to render image: {:?}", duration);
 }

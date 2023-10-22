@@ -1,8 +1,8 @@
-use std::rc::Rc;
-
 use std::{
     fs::{self, File},
+    io::prelude::*,
     path::Path,
+    rc::Rc,
     time::Instant,
 };
 
@@ -31,7 +31,7 @@ fn main() {
         fs::remove_file(path).unwrap();
     }
 
-    let file = File::create(path).unwrap();
+    let mut file = File::create(path).unwrap();
 
     // world
     let world = HittableList::new(vec![
@@ -57,10 +57,24 @@ fn main() {
         )),
     ]);
 
-    let mut camera = Camera::init(16. / 9., 400, 100, 50, file);
+    let camera = Camera::init(1., 400, 100, 50);
+
+    let part_amount = 4;
 
     let start = Instant::now();
-    camera.render(&world);
+
+    let result: Vec<String> = (0..part_amount)
+        .map(|i| {
+            // f
+            camera.render_part(&world, i, part_amount)
+        })
+        .collect();
+
     let duration = start.elapsed();
     println!("time to render image: {:?}", duration);
+
+    let result_string = result.join("");
+
+    write!(file, "P3\n{} {}\n255\n", 400, 400).unwrap();
+    write!(file, "{}", result_string).unwrap();
 }

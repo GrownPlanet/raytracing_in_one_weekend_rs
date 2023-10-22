@@ -77,8 +77,8 @@ impl Camera {
         let start_y = part * (self.image_height / part_amount);
         let end_y = (part + 1) * (self.image_height / part_amount);
 
-        for j in 0..self.image_height {
-            for i in start_y..end_y {
+        for j in start_y..end_y {
+            for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0., 0., 0.);
 
                 for _ in 0..self.sampels_per_pixel {

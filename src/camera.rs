@@ -43,7 +43,7 @@ impl Camera {
         let viewport_height = 2.;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
 
-        let center = Point3::new(0., 0., 0.3);
+        let center = Point3::new(0., 0., 0.);
 
         // calculate vectors accros the viewport edges
         let viewport_u = Point3::new(viewport_width, 0., 0.);

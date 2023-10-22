@@ -59,9 +59,9 @@ fn main() {
         )),
     ]);
 
-    let camera = Camera::init(1., 400, 100, 50);
+    let camera = Camera::init(16. / 9., 400, 100, 50);
 
-    let part_amount = 4;
+    let part_amount = 25;
 
     let start = Instant::now();
 
@@ -70,7 +70,6 @@ fn main() {
         .map(|i| {
             // f
             camera.render_part(&world, i, part_amount)
-            // String::new()
         })
         .collect();
 
@@ -79,6 +78,9 @@ fn main() {
 
     let result_string = result.join("");
 
-    write!(file, "P3\n{} {}\n255\n", 400, 400).unwrap();
+    let ar = 16. / 9.;
+    let ih = 400. / ar;
+
+    write!(file, "P3\n{} {}\n255\n", 400, ih as i32).unwrap();
     write!(file, "{}", result_string).unwrap();
 }

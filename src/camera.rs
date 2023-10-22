@@ -1,12 +1,16 @@
+use std::rc::Rc;
+
 use rand::Rng;
 
 use crate::hittable::HitRecord;
 use crate::interval::Interval;
+use crate::material::{Lambertian, Metal};
 use crate::ray::Ray;
 
 use crate::color::Color;
 use crate::hittable_list::HittableList;
 use crate::point3::Point3;
+use crate::sphere::Sphere;
 
 pub struct Camera {
     image_width: i32,
@@ -72,6 +76,7 @@ impl Camera {
 
     pub fn render_part(&self, world: &HittableList, part: i32, part_amount: i32) -> String {
         println!("-------------- part {}: Starting --------------", part);
+
         let mut return_string = String::new();
 
         let start_y = part * (self.image_height / part_amount);
@@ -83,7 +88,7 @@ impl Camera {
 
                 for _ in 0..self.sampels_per_pixel {
                     let r = self.get_ray(i, j);
-                    pixel_color = pixel_color + Self::ray_color(&r, world, self.max_depth);
+                    pixel_color = pixel_color + Self::ray_color(&r, &world, self.max_depth);
                 }
 
                 return_string.push_str(&pixel_color.to_string(self.sampels_per_pixel as f64));
@@ -101,6 +106,29 @@ impl Camera {
 
         let mut record = HitRecord::blank();
 
+        let world = HittableList::new(vec![
+            Box::new(Sphere::new(
+                Point3::new(0., 0., -1.),
+                0.5,
+                Rc::new(Lambertian::new(Color::new(0.3, 0.1, 0.7))),
+            )),
+            Box::new(Sphere::new(
+                Point3::new(1., 0., -1.),
+                0.5,
+                Rc::new(Metal::new(Color::new(0.7, 0.2, 0.4), 0.5)),
+            )),
+            Box::new(Sphere::new(
+                Point3::new(-1., 0., -1.),
+                0.5,
+                Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5), 0.2)),
+            )),
+            Box::new(Sphere::new(
+                Point3::new(0., -100.5, -1.),
+                100.,
+                Rc::new(Lambertian::new(Color::new(0.3, 0.6, 0.1))),
+            )),
+        ]);
+
         if world.hit(ray, Interval::new(0.001, f64::MAX), &mut record) {
             let mut scatterd = Ray::default();
             let mut attentuation = Color::default();
@@ -109,7 +137,7 @@ impl Camera {
                 .material
                 .scatter(ray, &record, &mut attentuation, &mut scatterd)
             {
-                return attentuation * Self::ray_color(&scatterd, world, depth - 1);
+                return attentuation * Self::ray_color(&scatterd, &world, depth - 1);
             }
             return Color::default();
         }

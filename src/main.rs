@@ -1,9 +1,8 @@
+use std::rc::Rc;
+
 use std::{
     fs::{self, File},
-    io::prelude::*,
     path::Path,
-    rc::Rc,
-    sync::Arc,
     time::Instant,
 };
 
@@ -21,7 +20,6 @@ use camera::Camera;
 use color::Color;
 use hittable_list::HittableList;
 use point3::Point3;
-use rayon::prelude::*;
 use sphere::Sphere;
 
 use crate::material::{Lambertian, Metal};
@@ -33,7 +31,7 @@ fn main() {
         fs::remove_file(path).unwrap();
     }
 
-    let mut file = File::create(path).unwrap();
+    let file = File::create(path).unwrap();
 
     // world
     let world = HittableList::new(vec![
@@ -59,29 +57,10 @@ fn main() {
         )),
     ]);
 
-    let image_width = 300;
-    write!(file, "P3\n{} {}\n255\n", image_width, image_width).unwrap();
-    let part_a = 3;
-
-    let camera = Camera::init(1., image_width, 100, 50);
+    let mut camera = Camera::init(16. / 9., 400, 100, 50, file);
 
     let start = Instant::now();
-
-    let strings: Vec<String> = (0..part_a)
-        .into_par_iter()
-        .map(|i| camera.render_part(&world, i, part_a))
-        .collect();
-
+    camera.render(&world);
     let duration = start.elapsed();
     println!("time to render image: {:?}", duration);
-
-    let mut yay = String::new();
-
-    for s in strings.iter() {
-        yay.push_str(&s);
-    }
-
-    // let yay = strings.join("");
-
-    // write!(file, "{}", yay).unwrap();
 }

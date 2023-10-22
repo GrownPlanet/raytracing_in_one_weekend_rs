@@ -1,5 +1,6 @@
+use std::{fs::File, io::prelude::*};
+
 use rand::Rng;
-use std::io::Write;
 
 use crate::hittable::HitRecord;
 use crate::interval::Interval;
@@ -9,7 +10,6 @@ use crate::color::Color;
 use crate::hittable_list::HittableList;
 use crate::point3::Point3;
 
-#[derive(Clone)]
 pub struct Camera {
     image_width: i32,
     image_height: i32,
@@ -20,7 +20,8 @@ pub struct Camera {
 
     sampels_per_pixel: i32,
     max_depth: i32,
-    // file: File,
+
+    file: File,
 }
 
 impl Camera {
@@ -29,7 +30,7 @@ impl Camera {
         image_width: i32,
         sampels_per_pixel: i32,
         max_depth: i32,
-        // mut file: File,
+        mut file: File,
     ) -> Self {
         // calculate image height
         let mut image_height = (image_width as f64 / aspect_ratio) as i32;
@@ -43,7 +44,7 @@ impl Camera {
         let viewport_height = 2.;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
 
-        let center = Point3::new(0., 0., 0.);
+        let center = Point3::new(0., 0., 0.3);
 
         // calculate vectors accros the viewport edges
         let viewport_u = Point3::new(viewport_width, 0., 0.);
@@ -62,7 +63,7 @@ impl Camera {
         let pixel00 =
             viewport_upper_left.clone() + (pixel_delta_u.clone() + pixel_delta_v.clone()) / 2.;
 
-        // write!(file, "P3\n{} {}\n255\n", image_width, image_height).unwrap();
+        write!(file, "P3\n{} {}\n255\n", image_width, image_height).unwrap();
 
         Self {
             image_width,
@@ -73,21 +74,14 @@ impl Camera {
             pixel_delta_v,
             sampels_per_pixel,
             max_depth,
-            // file,
+            file,
         }
     }
 
-    pub fn render_part(&self, world: &HittableList, part: i32, part_a: i32) -> String {
-        println!(":(");
-        let start_y = part * (self.image_height as f64 / part_a as f64) as i32;
-        let end_y = (part + 1) * (self.image_height as f64 / part_a as f64) as i32;
-
-        let mut result_string = String::new();
-
-        for j in start_y..end_y {
-            // print!("Scanlines remaining: {} \r", (self.image_height - j));
-            // std::io::stdout().flush().unwrap();
-
+    pub fn render(&mut self, world: &HittableList) {
+        for j in 0..self.image_height {
+            print!("Scanlines remaining: {} \r", (self.image_height - j));
+            std::io::stdout().flush().unwrap();
             for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0., 0., 0.);
 
@@ -96,18 +90,15 @@ impl Camera {
                     pixel_color = pixel_color + Self::ray_color(&r, world, self.max_depth);
                 }
 
-                result_string.push_str(&format![
+                write!(
+                    self.file,
                     "{}",
                     pixel_color.to_string(self.sampels_per_pixel as f64)
-                ])
+                )
+                .unwrap();
             }
         }
-        println!("-------------- part {}: Done --------------", part);
-
-        // println!("{}", result_string);
-
-        result_string
-        // String::new()
+        println!("-------------- Done --------------")
     }
 
     fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Color {

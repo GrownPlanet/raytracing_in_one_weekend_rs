@@ -63,7 +63,7 @@ fn main() {
     let image_width = 400;
     let image_height = image_width as f64 / aspect_ratio;
 
-    let camera = Camera::init(image_height, image_width, 100, 50);
+    let camera = Camera::init(aspect_ratio, image_width, 100, 50);
 
     let part_amount = 25;
 

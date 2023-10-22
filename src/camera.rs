@@ -74,7 +74,7 @@ impl Camera {
         }
     }
 
-    pub fn render_part(&self, world: &HittableList, part: i32, part_amount: i32) -> String {
+    pub fn render_part(&self, _world: &HittableList, part: i32, part_amount: i32) -> String {
         println!("-------------- part {}: Starting --------------", part);
 
         let mut return_string = String::new();

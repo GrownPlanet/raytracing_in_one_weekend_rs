@@ -59,7 +59,11 @@ fn main() {
         )),
     ]);
 
-    let camera = Camera::init(16. / 9., 400, 100, 50);
+    let aspect_ratio = 16. / 9.;
+    let image_width = 400;
+    let image_height = image_width as f64 / aspect_ratio;
+
+    let camera = Camera::init(image_height, image_width, 100, 50);
 
     let part_amount = 25;
 
@@ -78,9 +82,6 @@ fn main() {
 
     let result_string = result.join("");
 
-    let ar = 16. / 9.;
-    let ih = 400. / ar;
-
-    write!(file, "P3\n{} {}\n255\n", 400, ih as i32).unwrap();
+    write!(file, "P3\n{} {}\n255\n", image_width, image_height as i32).unwrap();
     write!(file, "{}", result_string).unwrap();
 }

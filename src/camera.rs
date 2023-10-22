@@ -82,6 +82,29 @@ impl Camera {
         let start_y = part * (self.image_height / part_amount);
         let end_y = (part + 1) * (self.image_height / part_amount);
 
+        let world = HittableList::new(vec![
+            Box::new(Sphere::new(
+                Point3::new(0., 0., -1.),
+                0.5,
+                Rc::new(Lambertian::new(Color::new(0.3, 0.1, 0.7))),
+            )),
+            Box::new(Sphere::new(
+                Point3::new(1., 0., -1.),
+                0.5,
+                Rc::new(Metal::new(Color::new(0.7, 0.2, 0.4), 0.5)),
+            )),
+            Box::new(Sphere::new(
+                Point3::new(-1., 0., -1.),
+                0.5,
+                Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5), 0.2)),
+            )),
+            Box::new(Sphere::new(
+                Point3::new(0., -100.5, -1.),
+                100.,
+                Rc::new(Lambertian::new(Color::new(0.3, 0.6, 0.1))),
+            )),
+        ]);
+
         for j in start_y..end_y {
             for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0., 0., 0.);
@@ -105,29 +128,6 @@ impl Camera {
         }
 
         let mut record = HitRecord::blank();
-
-        let world = HittableList::new(vec![
-            Box::new(Sphere::new(
-                Point3::new(0., 0., -1.),
-                0.5,
-                Rc::new(Lambertian::new(Color::new(0.3, 0.1, 0.7))),
-            )),
-            Box::new(Sphere::new(
-                Point3::new(1., 0., -1.),
-                0.5,
-                Rc::new(Metal::new(Color::new(0.7, 0.2, 0.4), 0.5)),
-            )),
-            Box::new(Sphere::new(
-                Point3::new(-1., 0., -1.),
-                0.5,
-                Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5), 0.2)),
-            )),
-            Box::new(Sphere::new(
-                Point3::new(0., -100.5, -1.),
-                100.,
-                Rc::new(Lambertian::new(Color::new(0.3, 0.6, 0.1))),
-            )),
-        ]);
 
         if world.hit(ray, Interval::new(0.001, f64::MAX), &mut record) {
             let mut scatterd = Ray::default();

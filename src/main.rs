@@ -6,6 +6,8 @@ use std::{
     time::Instant,
 };
 
+use rayon::prelude::*;
+
 mod camera;
 mod color;
 mod hittable;
@@ -64,9 +66,11 @@ fn main() {
     let start = Instant::now();
 
     let result: Vec<String> = (0..part_amount)
+        .into_par_iter()
         .map(|i| {
             // f
             camera.render_part(&world, i, part_amount)
+            // String::new()
         })
         .collect();
 

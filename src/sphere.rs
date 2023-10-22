@@ -1,3 +1,4 @@
+use std::marker::{Send, Sync};
 use std::rc::Rc;
 
 use crate::{
@@ -23,6 +24,9 @@ impl Sphere {
         }
     }
 }
+
+unsafe impl Send for Sphere {}
+unsafe impl Sync for Sphere {}
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, rayt: Interval, hit_record: &mut HitRecord) -> bool {

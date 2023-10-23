@@ -36,7 +36,11 @@ impl Camera {
         // camera
         let focal_length = 1.;
 
-        let viewport_height = 2.;
+        let fov = 90.;
+        let theta = degrees_to_radians(fov);
+        let h = (theta / 2.).tan();
+
+        let viewport_height = 2. * h * focal_length;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
 
         let center = Point3::new(0., 0., 0.3);
@@ -148,4 +152,8 @@ impl Camera {
 
         return (self.pixel_delta_u.clone() * px) + (self.pixel_delta_v.clone() * py);
     }
+}
+
+fn degrees_to_radians(degrees: f64) -> f64 {
+    degrees * (std::f64::consts::PI / 180.0)
 }

@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::{
     interval::Interval,
@@ -12,7 +12,7 @@ pub struct HitRecord {
     pub normal: Point3,
     pub t: f64,
     pub front_face: bool,
-    pub material: Rc<dyn Material>,
+    pub material: Arc<dyn Material>,
 }
 
 impl HitRecord {
@@ -32,7 +32,7 @@ impl HitRecord {
             normal: Point3::default(),
             t: 0.,
             front_face: false,
-            material: Rc::new(Lambertian::default()),
+            material: Arc::new(Lambertian::default()),
         }
     }
 }

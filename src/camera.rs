@@ -1,16 +1,12 @@
-use std::rc::Rc;
-
 use rand::Rng;
 
 use crate::hittable::HitRecord;
 use crate::interval::Interval;
-use crate::material::{Lambertian, Metal};
 use crate::ray::Ray;
 
 use crate::color::Color;
 use crate::hittable_list::HittableList;
 use crate::point3::Point3;
-use crate::sphere::Sphere;
 
 pub struct Camera {
     image_width: i32,
@@ -74,7 +70,7 @@ impl Camera {
         }
     }
 
-    pub fn render_part(&self, _world: &HittableList, part: i32, part_amount: i32) -> String {
+    pub fn render_part(&self, world: &HittableList, part: i32, part_amount: i32) -> String {
         println!("-------------- part {}: Starting --------------", part);
 
         let mut return_string = String::new();
@@ -83,29 +79,6 @@ impl Camera {
             (part as f64 * (self.image_height as f64 / part_amount as f64)).round() as i32;
         let end_y =
             ((part as f64 + 1.) * (self.image_height as f64 / part_amount as f64)).round() as i32;
-
-        let world = HittableList::new(vec![
-            Box::new(Sphere::new(
-                Point3::new(0., 0., -1.),
-                0.5,
-                Rc::new(Lambertian::new(Color::new(0.3, 0.1, 0.7))),
-            )),
-            Box::new(Sphere::new(
-                Point3::new(1., 0., -1.),
-                0.5,
-                Rc::new(Metal::new(Color::new(0.7, 0.2, 0.4), 0.5)),
-            )),
-            Box::new(Sphere::new(
-                Point3::new(-1., 0., -1.),
-                0.5,
-                Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5), 0.2)),
-            )),
-            Box::new(Sphere::new(
-                Point3::new(0., -100.5, -1.),
-                100.,
-                Rc::new(Lambertian::new(Color::new(0.3, 0.6, 0.1))),
-            )),
-        ]);
 
         for j in start_y..end_y {
             for i in 0..self.image_width {
@@ -119,7 +92,7 @@ impl Camera {
                 return_string.push_str(&pixel_color.to_string(self.sampels_per_pixel as f64));
             }
         }
-        println!("---------------- part {}: Done ----------------", part);
+        println!("-------------- part {}: Done ------------------", part);
 
         return_string
     }

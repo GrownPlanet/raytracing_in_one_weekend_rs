@@ -79,8 +79,10 @@ impl Camera {
 
         let mut return_string = String::new();
 
-        let start_y = part * (self.image_height / part_amount);
-        let end_y = (part + 1) * (self.image_height / part_amount);
+        let start_y =
+            (part as f64 * (self.image_height as f64 / part_amount as f64)).round() as i32;
+        let end_y =
+            ((part as f64 + 1.) * (self.image_height as f64 / part_amount as f64)).round() as i32;
 
         let world = HittableList::new(vec![
             Box::new(Sphere::new(

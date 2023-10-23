@@ -65,7 +65,7 @@ fn main() {
 
     let camera = Camera::init(aspect_ratio, image_width, 100, 50);
 
-    let part_amount = 10;
+    let part_amount = 16;
 
     let start = Instant::now();
 

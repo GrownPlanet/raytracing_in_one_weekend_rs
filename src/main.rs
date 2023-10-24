@@ -1,10 +1,4 @@
-use std::{
-    // fs::{self, File},
-    // io::prelude::*,
-    path::Path,
-    sync::Arc,
-    // time::Instant,
-};
+use std::sync::Arc;
 
 use rayon::prelude::*;
 
@@ -64,7 +58,9 @@ fn main() -> Result<(), String> {
     let image_width = 400;
     let image_height = image_width as f64 / aspect_ratio;
 
-    let camera = Camera::init(aspect_ratio, image_width, 1, 50);
+    let sampels_per_pixel = 1;
+
+    let camera = Camera::init(aspect_ratio, image_width, sampels_per_pixel, 50);
 
     let part_amount = 16;
 
@@ -110,15 +106,12 @@ fn main() -> Result<(), String> {
 
         for i in result {
             for c in i {
+                let color = c.2.get_color(sampels_per_pixel as f64);
                 set_pixel(
                     &mut canvas,
                     c.0,
                     c.1,
-                    pixels::Color::RGB(
-                        (c.2.r * 256.) as u8,
-                        (c.2.g * 256.) as u8,
-                        (c.2.b * 256.) as u8,
-                    ),
+                    pixels::Color::RGB(color.r as u8, color.g as u8, color.b as u8),
                     multiplier as i32,
                 )?;
             }

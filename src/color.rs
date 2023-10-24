@@ -10,6 +10,14 @@ impl Color {
     pub fn new(r: f64, g: f64, b: f64) -> Self {
         Self { r, g, b }
     }
+
+    pub fn get_color(&self, samples_per_pixel: f64) -> Self {
+        Self {
+            r: self.r / samples_per_pixel * 256.,
+            g: self.g / samples_per_pixel * 256.,
+            b: self.b / samples_per_pixel * 256.,
+        }
+    }
 }
 
 impl ops::Mul<f64> for Color {

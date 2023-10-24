@@ -59,6 +59,7 @@ fn main() -> Result<(), String> {
     let image_height = image_width as f64 / aspect_ratio;
 
     let mut sampels_per_pixel = 1;
+    let max_depth = 4;
 
     let camera = Camera::init(aspect_ratio, image_width, sampels_per_pixel, 50);
 
@@ -99,6 +100,10 @@ fn main() -> Result<(), String> {
             }
         }
 
+        if sampels_per_pixel > max_depth {
+            continue;
+        }
+
         let result: Vec<Vec<(i32, i32, Color)>> = (0..part_amount)
             .into_par_iter()
             .map(|i| camera.render_part(&world, i, part_amount))
@@ -110,6 +115,7 @@ fn main() -> Result<(), String> {
                 current_frame[c.1 as usize][c.0 as usize] = color;
             }
         }
+
         average_frame = frag(
             average_frame.clone(),
             current_frame.clone(),
@@ -128,11 +134,8 @@ fn main() -> Result<(), String> {
                 )?;
             }
         }
-
-        // canvas.clear();
-        canvas.present();
-
         sampels_per_pixel += 1;
+        canvas.present();
     }
     Ok(())
 }

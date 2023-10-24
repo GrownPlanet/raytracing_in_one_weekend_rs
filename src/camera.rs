@@ -74,31 +74,36 @@ impl Camera {
         }
     }
 
-    pub fn render_part(&self, world: &HittableList, part: i32, part_amount: i32) -> String {
-        println!("-------------- part {}: Starting --------------", part);
+    pub fn render_part(
+        &self,
+        world: &HittableList,
+        part: i32,
+        part_amount: i32,
+    ) -> Vec<(i32, i32, Color)> {
+        // println!("-------------- part {}: Starting --------------", part);
 
-        let mut return_string = String::new();
+        let mut return_vec: Vec<(i32, i32, Color)> = vec![];
 
         let start_y =
             (part as f64 * (self.image_height as f64 / part_amount as f64)).round() as i32;
         let end_y =
             ((part as f64 + 1.) * (self.image_height as f64 / part_amount as f64)).round() as i32;
 
-        for j in start_y..end_y {
+        for k in start_y..end_y {
             for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0., 0., 0.);
 
                 for _ in 0..self.sampels_per_pixel {
-                    let r = self.get_ray(i, j);
+                    let r = self.get_ray(i, k);
                     pixel_color = pixel_color + Self::ray_color(&r, &world, self.max_depth);
                 }
 
-                return_string.push_str(&pixel_color.to_string(self.sampels_per_pixel as f64));
+                return_vec.push((i, k, pixel_color));
             }
         }
-        println!("-------------- part {}: Done ------------------", part);
+        // println!("-------------- part {}: Done ------------------", part);
 
-        return_string
+        return_vec
     }
 
     fn ray_color(ray: &Ray, world: &HittableList, depth: i32) -> Color {

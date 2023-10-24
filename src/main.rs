@@ -58,7 +58,7 @@ fn main() -> Result<(), String> {
     let image_width = 400;
     let image_height = image_width as f64 / aspect_ratio;
 
-    let sampels_per_pixel = 1;
+    let mut sampels_per_pixel = 1;
 
     let camera = Camera::init(aspect_ratio, image_width, sampels_per_pixel, 50);
 
@@ -84,6 +84,9 @@ fn main() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
 
+    let mut current_frame = vec![vec![Color::new(0., 0., 0.); 400]; 255];
+    let mut average_frame = vec![vec![Color::new(0., 0., 0.); 400]; 255];
+
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -98,19 +101,28 @@ fn main() -> Result<(), String> {
 
         let result: Vec<Vec<(i32, i32, Color)>> = (0..part_amount)
             .into_par_iter()
-            .map(|i| {
-                // f
-                camera.render_part(&world, i, part_amount)
-            })
+            .map(|i| camera.render_part(&world, i, part_amount))
             .collect();
 
         for i in result {
             for c in i {
-                let color = c.2.get_color(sampels_per_pixel as f64);
+                let color = c.2.get_color(1.);
+                current_frame[c.1 as usize][c.0 as usize] = color;
+            }
+        }
+        average_frame = frag(
+            average_frame.clone(),
+            current_frame.clone(),
+            sampels_per_pixel,
+        );
+
+        for y in 0..average_frame.len() {
+            for x in 0..average_frame[0].len() {
+                let color = average_frame[y][x].clone();
                 set_pixel(
                     &mut canvas,
-                    c.0,
-                    c.1,
+                    x as i32,
+                    y as i32,
                     pixels::Color::RGB(color.r as u8, color.g as u8, color.b as u8),
                     multiplier as i32,
                 )?;
@@ -119,6 +131,8 @@ fn main() -> Result<(), String> {
 
         // canvas.clear();
         canvas.present();
+
+        sampels_per_pixel += 1;
     }
     Ok(())
 }
@@ -140,4 +154,23 @@ fn set_pixel(
     ))?;
 
     Ok(())
+}
+
+fn frag(
+    old_frame: Vec<Vec<Color>>,
+    new_frame: Vec<Vec<Color>>,
+    iteratioin: i32,
+) -> Vec<Vec<Color>> {
+    let mut return_vec = vec![vec![Color::new(0., 0., 0.,); 400]; 255];
+
+    let weight = 1. / (iteratioin as f64 + 1.);
+
+    for y in 0..old_frame.len() {
+        for x in 0..old_frame[0].len() {
+            return_vec[y][x] =
+                old_frame[y][x].clone() * (1. - weight) + new_frame[y][x].clone() * weight;
+        }
+    }
+
+    return_vec
 }

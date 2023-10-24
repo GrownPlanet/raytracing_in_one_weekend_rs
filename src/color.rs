@@ -10,17 +10,6 @@ impl Color {
     pub fn new(r: f64, g: f64, b: f64) -> Self {
         Self { r, g, b }
     }
-
-    pub fn to_string(&self, sampels_per_pixel: f64) -> String {
-        let scale = 1. / sampels_per_pixel;
-
-        format![
-            "{} {} {}\n",
-            self.r * scale * 256.,
-            self.g * scale * 256.,
-            self.b * scale * 256.
-        ]
-    }
 }
 
 impl ops::Mul<f64> for Color {

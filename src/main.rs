@@ -31,19 +31,11 @@ extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels;
-use sdl2::rect::Point;
+use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
 fn main() -> Result<(), String> {
-    // open file to put image in
-    // let path = "image.ppm";
-    // if Path::new(path).exists() {
-    //     fs::remove_file(path).unwrap();
-    // }
-
-    // let mut file = File::create(path).unwrap();
-
     // world
     let world = Arc::new(HittableList::new(vec![
         Box::new(Sphere::new(
@@ -76,32 +68,16 @@ fn main() -> Result<(), String> {
 
     let part_amount = 16;
 
-    // let start = Instant::now();
-
-    // let result: Vec<String> = (0..part_amount)
-    //     .into_par_iter()
-    //     .map(|i| {
-    //         // f
-    //         camera.render_part(&world, i, part_amount)
-    //     })
-    //     .collect();
-
-    // let duration = start.elapsed();
-    // println!("time to render image: {:?}", duration);
-
-    // let result_string = result.join("");
-
-    // write!(file, "P3\n{} {}\n255\n", image_width, image_height as i32).unwrap();
-    // write!(file, "{}", result_string).unwrap();
+    let multiplier = 2;
 
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
         .window(
-            "rust-sdl2 demo: Video",
-            image_width as u32,
-            image_height as u32,
+            "raytracer",
+            image_width as u32 * multiplier,
+            image_height as u32 * multiplier,
         )
         .position_centered()
         .opengl()
@@ -143,7 +119,8 @@ fn main() -> Result<(), String> {
                         (c.2.g * 256.) as u8,
                         (c.2.b * 256.) as u8,
                     ),
-                );
+                    multiplier as i32,
+                )?;
             }
         }
 
@@ -153,7 +130,21 @@ fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn set_pixel(canvas: &mut Canvas<Window>, x: i32, y: i32, color: pixels::Color) {
+fn set_pixel(
+    canvas: &mut Canvas<Window>,
+    x: i32,
+    y: i32,
+    color: pixels::Color,
+    m: i32,
+) -> Result<(), String> {
     canvas.set_draw_color(color);
-    canvas.draw_point(Point::new(x, y)).unwrap();
+    // canvas.draw_point(Point::new(x, y)).unwrap();
+    canvas.fill_rect(Rect::new(
+        x * m,
+        y * m,
+        ((x + 1) * m) as u32,
+        ((y + 1) * m) as u32,
+    ))?;
+
+    Ok(())
 }

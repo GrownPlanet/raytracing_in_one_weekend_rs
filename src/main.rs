@@ -26,7 +26,8 @@ extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels;
-use sdl2::rect::{Point, Rect};
+// use sdl2::rect::{Point, Rect};
+use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
@@ -66,7 +67,7 @@ fn main() -> Result<(), String> {
 
     let part_amount = 16;
 
-    let multiplier = 3;
+    let multiplier = 2;
 
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
@@ -128,19 +129,18 @@ fn main() -> Result<(), String> {
             sampels_per_pixel,
         );
 
-        // for y in 0..average_frame.len() {
-        //     for x in 0..average_frame[0].len() {
-        //         let color = average_frame[y][x].clone();
-        //         set_pixel(
-        //             &mut canvas,
-        //             x as i32,
-        //             y as i32,
-        //             pixels::Color::RGB(color.r as u8, color.g as u8, color.b as u8),
-        //             multiplier as i32,
-        //         )?;
-        //     }
-        // }
-        draw_pixels(&mut canvas, &average_frame, multiplier as usize);
+        for y in 0..average_frame.len() {
+            for x in 0..average_frame[0].len() {
+                let color = average_frame[y][x].clone();
+                set_pixel(
+                    &mut canvas,
+                    x as i32,
+                    y as i32,
+                    pixels::Color::RGB(color.r as u8, color.g as u8, color.b as u8),
+                    multiplier as i32,
+                )?;
+            }
+        }
 
         sampels_per_pixel += 1;
         canvas.present();
@@ -150,50 +150,6 @@ fn main() -> Result<(), String> {
             "time to trace: {:?}. time to convert: {:?}",
             time_to_trace, end_time
         );
-    }
-    Ok(())
-}
-
-fn draw_pixels(
-    canvas: &mut Canvas<Window>,
-    average_frame: &Vec<Vec<Color>>,
-    multiplier: usize,
-) -> Result<(), String> {
-    let mut average_frame_p = vec![vec![pixels::Color::RGB(0, 0, 0); 400]; 255];
-    for i in 0..average_frame.len() {
-        for k in 0..average_frame[0].len() {
-            let c = &average_frame[i][k];
-            average_frame_p[i][k] = pixels::Color::RGB(c.r as u8, c.g as u8, c.b as u8);
-        }
-    }
-
-    let mut buffer = vec![pixels::Color::BLACK; average_frame.len() * average_frame[0].len()];
-
-    for y in 0..average_frame_p.len() {
-        for x in 0..average_frame_p[0].len() {
-            buffer[y * average_frame_p[0].len() + x] = average_frame_p[y][x].clone();
-        }
-    }
-
-    canvas.set_draw_color(pixels::Color::BLACK);
-    canvas.fill_rect(Rect::new(
-        0,
-        0,
-        (average_frame_p[0].len() * multiplier) as u32,
-        (average_frame_p.len() * multiplier) as u32,
-    ))?;
-
-    for y in 0..average_frame_p.len() {
-        for x in 0..average_frame_p[0].len() {
-            let color = buffer[y * average_frame_p[0].len() + x];
-            canvas.set_draw_color(color);
-            canvas.fill_rect(Rect::new(
-                (x * multiplier) as i32,
-                (y * multiplier) as i32,
-                ((x + 1) * multiplier) as u32,
-                ((y + 1) * multiplier) as u32,
-            ))?;
-        }
     }
 
     Ok(())

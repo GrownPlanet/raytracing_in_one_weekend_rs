@@ -26,8 +26,7 @@ extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels;
-// use sdl2::rect::{Point, Rect};
-use sdl2::rect::Rect;
+use sdl2::rect::Point;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
@@ -67,17 +66,11 @@ fn main() -> Result<(), String> {
 
     let part_amount = 16;
 
-    let multiplier = 2;
-
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
-        .window(
-            "raytracer",
-            image_width as u32 * multiplier,
-            image_height as u32 * multiplier,
-        )
+        .window("raytracer", image_width as u32, image_height as u32)
         .position_centered()
         .opengl()
         .build()
@@ -137,7 +130,6 @@ fn main() -> Result<(), String> {
                     x as i32,
                     y as i32,
                     pixels::Color::RGB(color.r as u8, color.g as u8, color.b as u8),
-                    multiplier as i32,
                 )?;
             }
         }
@@ -160,16 +152,9 @@ fn set_pixel(
     x: i32,
     y: i32,
     color: pixels::Color,
-    m: i32,
 ) -> Result<(), String> {
     canvas.set_draw_color(color);
-    // canvas.draw_point(Point::new(x, y)).unwrap();
-    canvas.fill_rect(Rect::new(
-        x * m,
-        y * m,
-        ((x + 1) * m) as u32,
-        ((y + 1) * m) as u32,
-    ))?;
+    canvas.draw_point(Point::new(x, y)).unwrap();
 
     Ok(())
 }

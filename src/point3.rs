@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::ops;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Point3 {
     pub x: f64,
     pub y: f64,

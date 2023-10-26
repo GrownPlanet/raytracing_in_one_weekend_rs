@@ -123,6 +123,22 @@ fn main() -> Result<(), String> {
                     sampels_per_pixel = 1;
                     average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
                 }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Right),
+                    ..
+                } => {
+                    camera.rotate_right();
+                    sampels_per_pixel = 1;
+                    average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Left),
+                    ..
+                } => {
+                    camera.rotate_left();
+                    sampels_per_pixel = 1;
+                    average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
+                }
                 _ => {}
             }
         }
@@ -131,15 +147,15 @@ fn main() -> Result<(), String> {
             continue;
         }
 
-        let start_time = Instant::now();
+        // let start_time = Instant::now();
 
         let result: Vec<Vec<(i32, i32, Color)>> = (0..part_amount)
             .into_par_iter()
             .map(|i| camera.render_part(&world, i, part_amount))
             .collect();
 
-        let time_to_trace = start_time.elapsed();
-        let start_time = Instant::now();
+        // let time_to_trace = start_time.elapsed();
+        // let start_time = Instant::now();
 
         for i in result {
             for c in i {
@@ -169,11 +185,11 @@ fn main() -> Result<(), String> {
         sampels_per_pixel += 1;
         canvas.present();
 
-        let end_time = start_time.elapsed();
-        println!(
-            "time to trace: {:?}. time to convert: {:?}",
-            time_to_trace, end_time
-        );
+        // let end_time = start_time.elapsed();
+        // println!(
+        //     "time to trace: {:?}. time to convert: {:?}",
+        //     time_to_trace, end_time
+        // );
     }
 
     Ok(())

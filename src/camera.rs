@@ -11,6 +11,9 @@ use crate::point3::Point3;
 pub struct Camera {
     image_width: i32,
     image_height: i32,
+    viewport_width: f64,
+    viewport_height: f64,
+    focal_length: f64,
     center: Point3,
     pixel00: Point3,
     pixel_delta_u: Point3,
@@ -21,6 +24,44 @@ pub struct Camera {
 }
 
 impl Camera {
+    fn recalc(&mut self) {
+        // calculate vectors accros the viewport edges
+        let viewport_u = Point3::new(self.viewport_width, 0., 0.);
+        let viewport_v = Point3::new(0., -self.viewport_height, 0.);
+
+        // calculate delta vectors
+        let pixel_delta_u = viewport_u.clone() / self.image_width as f64;
+        let pixel_delta_v = viewport_v.clone() / self.image_height as f64;
+
+        // calculate the location of the upper left pixel
+        let viewport_upper_left = self.center.clone()
+            - Point3::new(0., 0., self.focal_length)
+            - viewport_u.clone() / 2.
+            - viewport_v.clone() / 2.;
+
+        self.pixel00 =
+            viewport_upper_left.clone() + (pixel_delta_u.clone() + pixel_delta_v.clone()) / 2.;
+    }
+    pub fn move_right(&mut self) {
+        self.center.x += 0.5;
+        self.recalc();
+    }
+
+    pub fn move_left(&mut self) {
+        self.center.x -= 0.5;
+        self.recalc();
+    }
+
+    pub fn move_forward(&mut self) {
+        self.center.z -= 0.5;
+        self.recalc();
+    }
+
+    pub fn move_back(&mut self) {
+        self.center.z += 0.5;
+        self.recalc();
+    }
+
     pub fn init(
         aspect_ratio: f64,
         image_width: i32,
@@ -65,6 +106,9 @@ impl Camera {
         Self {
             image_width,
             image_height,
+            viewport_width,
+            viewport_height,
+            focal_length,
             center,
             pixel00,
             pixel_delta_u,

@@ -62,7 +62,7 @@ fn main() -> Result<(), String> {
     let mut sampels_per_pixel = 1;
     let max_depth = 4;
 
-    let camera = Camera::init(aspect_ratio, image_width, sampels_per_pixel, 50);
+    let mut camera = Camera::init(aspect_ratio, image_width, sampels_per_pixel, 50);
 
     let part_amount = 16;
 
@@ -81,7 +81,7 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump()?;
 
     let mut current_frame = vec![vec![Color::new(0., 0., 0.); 400]; 255];
-    let mut average_frame = vec![vec![Color::new(0., 0., 0.); 400]; 255];
+    let mut average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
 
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -91,6 +91,38 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => break 'running,
+                Event::KeyDown {
+                    keycode: Some(Keycode::D),
+                    ..
+                } => {
+                    camera.move_right();
+                    sampels_per_pixel = 1;
+                    average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::A),
+                    ..
+                } => {
+                    camera.move_left();
+                    sampels_per_pixel = 1;
+                    average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::W),
+                    ..
+                } => {
+                    camera.move_forward();
+                    sampels_per_pixel = 1;
+                    average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::S),
+                    ..
+                } => {
+                    camera.move_back();
+                    sampels_per_pixel = 1;
+                    average_frame = vec![vec![Color::new(1., 1., 1.); 400]; 255];
+                }
                 _ => {}
             }
         }

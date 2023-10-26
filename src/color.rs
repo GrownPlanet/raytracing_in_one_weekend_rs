@@ -16,9 +16,9 @@ impl Color {
 
         format![
             "{} {} {}\n",
-            self.r * scale * 256.,
-            self.g * scale * 256.,
-            self.b * scale * 256.
+            (self.r * scale * 256.) as u8,
+            (self.g * scale * 256.) as u8,
+            (self.b * scale * 256.) as u8
         ]
     }
 }

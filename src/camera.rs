@@ -25,9 +25,9 @@ pub struct Camera {
 }
 
 impl Camera {
-    fn get_rotations(&self) -> (f64, f64) {
-        let rotated_x = 1. * self.yaw.cos() - 1. - self.yaw.sin();
-        let rotated_z = 1. * self.yaw.cos() + 1. - self.yaw.sin();
+    fn get_rotations(&self, offset: f64) -> (f64, f64) {
+        let rotated_x = offset * self.yaw.cos() - offset - self.yaw.sin();
+        let rotated_z = offset * self.yaw.cos() + offset - self.yaw.sin();
 
         (rotated_x, rotated_z)
     }
@@ -53,7 +53,7 @@ impl Camera {
     }
 
     fn recalc(&mut self) {
-        let r = self.get_rotations();
+        let r = self.get_rotations(0.1);
 
         // calculate vectors accros the viewport edges
         let viewport_u = Point3::new(self.viewport_width, 0., 0.);
@@ -72,8 +72,12 @@ impl Camera {
         self.pixel00 =
             viewport_upper_left.clone() + (pixel_delta_u.clone() + pixel_delta_v.clone()) / 2.;
 
-        println!("{:.1} {:?} {:?}", self.yaw, self.center, self.pixel00);
+        println!(
+            "{:.1} {:.3} {:.3}",
+            self.yaw, self.pixel00.x, self.pixel00.z
+        );
     }
+
     pub fn move_right(&mut self) {
         self.center.x += 0.5;
         self.recalc();
@@ -116,7 +120,7 @@ impl Camera {
         let viewport_height = 2. * h * focal_length;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
 
-        let center = Point3::new(0., 0., 0.3);
+        let center = Point3::new(0., 0., 1.);
 
         // calculate vectors accros the viewport edges
         let viewport_u = Point3::new(viewport_width, 0., 0.);
@@ -135,23 +139,20 @@ impl Camera {
         let pixel00 =
             viewport_upper_left.clone() + (pixel_delta_u.clone() + pixel_delta_v.clone()) / 2.;
 
-        let mut s = Self {
+        Self {
             image_width,
             image_height,
             viewport_width,
             viewport_height,
             focal_length,
-            yaw: 0.,
+            yaw: std::f64::consts::PI * -1.25,
             center,
             pixel00,
             pixel_delta_u,
             pixel_delta_v,
             sampels_per_pixel,
             max_depth,
-        };
-
-        s.recalc();
-        s
+        }
     }
 
     pub fn render_part(
@@ -216,11 +217,10 @@ impl Camera {
     }
 
     fn get_ray(&self, i: i32, j: i32) -> Ray {
-        // let (rx, ry) = self.get_rotations();
-
         let pixel_center = self.pixel00.clone()
             + (self.pixel_delta_u.clone() * i as f64)
             + (self.pixel_delta_v.clone() * j as f64);
+
         let pixel_sample = pixel_center + self.pixel_sample_square();
 
         let ray_origin = self.center.clone();

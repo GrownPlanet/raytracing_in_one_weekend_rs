@@ -27,9 +27,9 @@ pub struct Camera {
 impl Camera {
     fn get_rotations(&self) -> (f64, f64) {
         let rotated_x = 1. * self.yaw.cos() - 1. - self.yaw.sin();
-        let rotated_y = 1. * self.yaw.cos() + 1. - self.yaw.sin();
+        let rotated_z = 1. * self.yaw.cos() + 1. - self.yaw.sin();
 
-        (rotated_x, rotated_y)
+        (rotated_x, rotated_z)
     }
 
     pub fn rotate_right(&mut self) {
@@ -65,7 +65,7 @@ impl Camera {
 
         // calculate the location of the upper left pixel
         let viewport_upper_left = self.center.clone()
-            - Point3::new(r.0, r.1, self.focal_length)
+            - Point3::new(r.0, 0., self.focal_length + r.1)
             - viewport_u.clone() / 2.
             - viewport_v.clone() / 2.;
 
